@@ -2,17 +2,23 @@ variable "project" {
   type = string
 }
 
-variable "app_name" {
-  type = string
+variable "namespace" {
+  type    = string
+  default = null
 }
 
-variable "config_context" {
+variable "name" {
   type = string
 }
 
 variable "ingres" {
   type    = bool
   default = false
+}
+
+variable "domain" {
+  type = string
+  default = null
 }
 
 variable "service_name" {
@@ -25,11 +31,7 @@ variable "service_port" {
   default = ""
 }
 
-variable "namespace" {
-  type    = string
-  default = null
-}
-
 locals {
-  namespace = var.namespace != null ? var.namespace : var.app_name
+  namespace = var.namespace != null ? var.namespace : var.name
+  domain = var.domain != null ? var.domain : var.name
 }
