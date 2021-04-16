@@ -1,15 +1,37 @@
+---
 name: Release
 on:
-  push:
-    branches:
-      - main
+  push
 
 jobs:
-  release:
-    name: Release
+  commit:
+    name: Test commits
     runs-on: ubuntu-18.04
-    outputs:
-      new_release_version: ${{ steps.release.outputs.new_release_version }}
+    if: ${{ github.ref != 'refs/heads/main' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install semantic-release
+        run: npm install --save-dev semantic-release
+
+      - name: Replace logs
+        run: sed -i "s/logger.log('There are no relevant changes, so no new version is released.');/throw new AggregateError(['There are no relevant changes...']);/" node_modules/semantic-release/index.js
+
+      - uses: frabert/replace-string-action@v1.2
+        id: branch
+        with:
+          pattern: 'refs\/heads\/(.*)'
+          string: '${{ github.ref }}'
+          replace-with: '$1'
+
+      - name: Analyze commits
+        run: npx semantic-release -b ${{ steps.branch.outputs.replaced }} -p '@semantic-release/commit-analyzer' --dry-run
+
+  release:
+    name: Generate release
+    runs-on: ubuntu-18.04
+    if: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -19,5 +41,3 @@ jobs:
         uses: cycjimmy/semantic-release-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - run: echo ${{ steps.release.outputs.new_release_version }}
