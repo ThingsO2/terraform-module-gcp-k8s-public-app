@@ -17,7 +17,7 @@ variable "ingres" {
 }
 
 variable "domain" {
-  type = string
+  type    = string
   default = null
 }
 
@@ -31,7 +31,12 @@ variable "service_port" {
   default = ""
 }
 
+variable "root_domain" {
+  type    = string
+  default = "monom.ai"
+}
+
 locals {
   namespace = var.namespace != null ? var.namespace : var.name
-  domain = var.domain != null ? var.domain : var.name
+  domain    = var.domain != null ? var.domain : var.name
 }

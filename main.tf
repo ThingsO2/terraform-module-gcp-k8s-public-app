@@ -11,7 +11,7 @@ resource "kubernetes_manifest" "managed_certificate" {
     }
     spec = {
       domains = [
-        "${local.domain}.monom.ai"
+        "${local.domain}.${var.root_domain}"
       ]
     }
   }
@@ -37,7 +37,7 @@ resource "kubernetes_ingress" "this" {
 
   spec {
     rule {
-      host = "${local.domain}.monom.ai"
+      host = "${local.domain}.${var.root_domain}"
       http {
         path {
           backend {
@@ -83,12 +83,12 @@ resource "google_compute_ssl_policy" "this" {
 }
 
 data "aws_route53_zone" "this" {
-  name = "monom.ai."
+  name = "${var.root_domain}."
 }
 
 resource "aws_route53_record" "this" {
   zone_id = data.aws_route53_zone.this.zone_id
-  name    = "${local.domain}.monom.ai"
+  name    = "${local.domain}.${var.root_domain}."
   type    = "A"
   ttl     = "300"
   records = [google_compute_global_address.this.address]
