@@ -11,7 +11,7 @@ variable "name" {
   type = string
 }
 
-variable "ingres" {
+variable "ingress" {
   type    = bool
   default = false
 }

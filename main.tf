@@ -19,7 +19,7 @@ resource "kubernetes_manifest" "managed_certificate" {
 
 resource "kubernetes_ingress" "this" {
   provider = kubernetes
-  count    = var.ingres == true ? 1 : 0
+  count    = var.ingress == true ? 1 : 0
 
   metadata {
     name      = var.name
